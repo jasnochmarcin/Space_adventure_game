@@ -1,5 +1,5 @@
-# alien_invasion
-Creating popular Alien Invasion game from scratch. Using pygame
+# Space_adventure
+Creating game space adventure game from scratch using pygame. Player has to destroy all alien ships.
 
 ## Recent updates:
 - Added ability to move the spaceship
