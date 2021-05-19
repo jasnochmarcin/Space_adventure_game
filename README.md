@@ -9,4 +9,5 @@ Creating game space adventure game from scratch using pygame. Player has to dest
 - "q" - quit game
 - "right  arrow" - move right
 - "left arrow" - move left
+- "space" - shot bullet
 
