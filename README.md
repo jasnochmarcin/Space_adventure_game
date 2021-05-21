@@ -4,6 +4,7 @@ Creating game space adventure game from scratch using pygame. Player has to dest
 ## Recent updates:
 - Added ability to move the spaceship
 - Added ability to shot bullets
+- Added max bullets allowed
 
 ## Controls:
 - "q" - quit game
