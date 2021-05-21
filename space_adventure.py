@@ -28,17 +28,8 @@ class SpaceAdventure:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
-
-            # Removing projectiles that are outside the screen
-            for bullet in self.bullets.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullets.remove(bullet)
-
+            self._update_bullets()
             self._update_screen()
-
-
-
 
     def _check_events(self):
         """Response to keyboard and mouse events."""
@@ -70,8 +61,19 @@ class SpaceAdventure:
 
     def _fire_bullet(self):
         """Creating a new projectile and adding it to a projectile group"""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        """Updating the position of projectiles and removing projectiles that are outside the scree"""
+        # Updating the position of projectiles
+        self.bullets.update()
+
+        # Removing projectiles that are outside the screen
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _update_screen(self):
         # Refresh the screen during each iteration of the loop.
