@@ -5,6 +5,7 @@ Creating space adventure game from scratch using pygame. Player has to destroy a
 - Added ability to move the spaceship
 - Added ability to shot bullets
 - Added max bullets allowed
+- Added first row of enemies
 
 ## Controls:
 - "q" - quit game
