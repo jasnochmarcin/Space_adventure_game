@@ -17,3 +17,9 @@ class Settings:
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
         self.bullets_allowed = 3
+
+        # Enemies settings
+        self.alien_speed = 1
+        self.fleet_drop_speed = 10
+        # A value in fleet_direction = 1 indicates right, while -1 indicates left.
+        self.fleet_direction = 1
