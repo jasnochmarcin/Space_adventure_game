@@ -33,6 +33,7 @@ class SpaceAdventure:
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
 
     def _check_events(self):
@@ -79,10 +80,36 @@ class SpaceAdventure:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _update_aliens(self):
+        """Updating the position of all enemies"""
+        self.aliens.update()
+
     def _create_fleet(self):
         """Creating a full fleet of enemies"""
-        # Creating an enemy
+        # Creating an enemy and determining the number of enemies that will fit in a row
+        # The distance between each enemy is equal to the width of one enemy
         alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        avaiable_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = avaiable_space_x // (2 * alien_width)
+
+        # Determine how many rows of enemies will fit on the screen
+        ship_height = self.ship.rect.height
+        avaiable_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        number_rows = avaiable_space_y // (2 * alien_height)
+
+        # Creating a full fleet of enemies
+        for row_number in range(number_rows):
+            for alien_number in range(number_aliens_x):
+                self._create_alien(alien_number, row_number)
+
+    def _create_alien(self, alien_number, row_number):
+        # Creating an enemy and placing it in a row
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
     def _update_screen(self):
