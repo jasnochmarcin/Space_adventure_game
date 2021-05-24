@@ -1,8 +1,10 @@
 import sys
+from time import sleep
 
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -20,6 +22,9 @@ class SpaceAdventure:
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Space Adventure")
+
+        # Create an instance that stores game statistics.
+        self.stats = GameStats(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -72,17 +77,34 @@ class SpaceAdventure:
 
     def _update_bullets(self):
         """Updating the position of projectiles and removing projectiles that are outside the scree"""
-        # Updating the position of projectiles
+        # Removing projectiles that are outside the screen.
         self.bullets.update()
-
-        # Removing projectiles that are outside the screen
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        self._check_bullet_alien_collision()
+
+    def _check_bullet_alien_collision(self):
+        # Checking if the projectile hit the enemy, if yes, we remove the projectile and the enemy from the screen.
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if not self.aliens:
+            # Getting rid of existing bullets and creating a new fleet.
+            self.bullets.empty()
+            self._create_fleet()
+
     def _update_aliens(self):
-        """Updating the position of all enemies"""
+        """Checking for enemies near the edge, then updating the location of all aliens in the fleet."""
+        self._check_fleet_edges()
         self.aliens.update()
+
+        # Collision detection between enemy and player
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+        # Checking if the enemy has reached the bottom of the screen
+        self._check_aliens_bottom()
 
     def _create_fleet(self):
         """Creating a full fleet of enemies"""
@@ -111,6 +133,44 @@ class SpaceAdventure:
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _check_fleet_edges(self):
+        """Adequate reaction when the enemy reaches the edge of the screen."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Moving the entire fleet down and changing the direction in which it moves."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _ship_hit(self):
+        """Reaction to enemy hitting the ship"""
+        # Reduction in the value of owned ships
+        self.stats.ships_left -= 1
+
+        # Removing the contents of the aliens and bullets lists.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create a new fleet and center the ship.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Pause
+        sleep(0.5)
+
+    def _check_aliens_bottom(self):
+        """Checking if the enemy has reached the bottom of the screen"""
+        screen_rect = self.screen.get_rect()
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= screen_rect.bottom:
+                # The same as when a ship collides with an enemy
+                self._ship_hit()
+                break
 
     def _update_screen(self):
         # Refresh the screen during each iteration of the loop.
