@@ -7,8 +7,8 @@ Creating space adventure game from scratch using pygame. Player has to destroy a
 - Added max bullets allowed
 - Added first row of enemies
 - Added more enemies
-- Enemies now move one way (23.05)
-24.05
+- Enemies now move one way
+### 24.05
 - Enemies move from side to side and down
 - Added collisions - with bullets, edges of screen and players ship
 - Player can now shot and kill an enemie
