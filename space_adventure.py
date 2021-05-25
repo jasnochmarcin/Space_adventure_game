@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -32,13 +33,19 @@ class SpaceAdventure:
 
         self._create_fleet()
 
+        # Creating a Game button
+        self.play_button = Button(self, 0, "Game")
+
     def run_game(self):
         """Starting the main game loop"""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+
             self._update_screen()
 
     def _check_events(self):
@@ -50,6 +57,13 @@ class SpaceAdventure:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self.check_play_button(mouse_pos)
+
+    def check_play_button(self, mouse_pos):
+        if self.play_button.rect.collidepoint(mouse_pos):
+            self.stats.game_active = True
 
     def _check_keydown_events(self, event):
         """Response to key press"""
@@ -149,19 +163,23 @@ class SpaceAdventure:
 
     def _ship_hit(self):
         """Reaction to enemy hitting the ship"""
-        # Reduction in the value of owned ships
-        self.stats.ships_left -= 1
+        if self.stats.ships_left > 0:
+            # Reduction in the value of owned ships
+            self.stats.ships_left -= 1
 
-        # Removing the contents of the aliens and bullets lists.
-        self.aliens.empty()
-        self.bullets.empty()
+            # Removing the contents of the aliens and bullets lists.
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # Create a new fleet and center the ship.
-        self._create_fleet()
-        self.ship.center_ship()
+            # Create a new fleet and center the ship.
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # Pause
-        sleep(0.5)
+            # Pause
+            sleep(0.5)
+
+        else:
+            self.stats.game_active = False
 
     def _check_aliens_bottom(self):
         """Checking if the enemy has reached the bottom of the screen"""
@@ -179,6 +197,10 @@ class SpaceAdventure:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        # Displaying the button when the game is inactive
+        if not self.stats.game_active:
+            self.play_button.draw_button()
 
         # Display last modified screen
         pygame.display.flip()
