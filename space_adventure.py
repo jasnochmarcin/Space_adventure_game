@@ -62,8 +62,24 @@ class SpaceAdventure:
                 self.check_play_button(mouse_pos)
 
     def check_play_button(self, mouse_pos):
-        if self.play_button.rect.collidepoint(mouse_pos):
+        """Starting a new game by pressing the Game button"""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not  self.stats.game_active:
+            # Reset the game stats.
+            self.settings.initialize_dynamic_settings()
+            self.stats.reset_stats()
             self.stats.game_active = True
+
+            # Empty aliens and bullets lists.
+            self.aliens.empty()
+            self.bullets.empty()
+
+            # Create enemies and center the ship.
+            self._create_fleet()
+            self.ship.center_ship()
+
+            # Hide mouse cursor
+            pygame.mouse.set_visible(False)
 
     def _check_keydown_events(self, event):
         """Response to key press"""
@@ -107,6 +123,7 @@ class SpaceAdventure:
             # Getting rid of existing bullets and creating a new fleet.
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _update_aliens(self):
         """Checking for enemies near the edge, then updating the location of all aliens in the fleet."""
@@ -180,6 +197,7 @@ class SpaceAdventure:
 
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _check_aliens_bottom(self):
         """Checking if the enemy has reached the bottom of the screen"""
