@@ -7,7 +7,7 @@ class GameStats:
         self.reset_stats()
 
         # Start Space Adventur in an active state.
-        self.game_active = True
+        self.game_active = False
 
     def reset_stats(self):
         """Initialize statistics that may change during the game."""
