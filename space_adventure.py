@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -26,6 +27,7 @@ class SpaceAdventure:
 
         # Create an instance that stores game statistics.
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -69,6 +71,7 @@ class SpaceAdventure:
             self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.stats.game_active = True
+            self.sb.prep_score()
 
             # Empty aliens and bullets lists.
             self.aliens.empty()
@@ -118,6 +121,11 @@ class SpaceAdventure:
     def _check_bullet_alien_collision(self):
         # Checking if the projectile hit the enemy, if yes, we remove the projectile and the enemy from the screen.
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
 
         if not self.aliens:
             # Getting rid of existing bullets and creating a new fleet.
@@ -215,6 +223,9 @@ class SpaceAdventure:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        # Display of scoring information
+        self.sb.show_score()
 
         # Displaying the button when the game is inactive
         if not self.stats.game_active:
