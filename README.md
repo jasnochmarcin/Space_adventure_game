@@ -10,6 +10,7 @@ Creating space adventure game from scratch using pygame. Player has to destroy a
 ### 25.05
 - Added a "Game" button to start a game
 - Added increasing difficoulty after win
+- Added scoring system
 
 ### 24.05
 - Enemies move from side to side and down
