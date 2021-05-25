@@ -14,6 +14,9 @@ Creating space adventure game from scratch using pygame. Player has to destroy a
 - Player can now shot and kill an enemie
 - Added game stats
 
+### 25.05
+- Added a "Game" button to start a game
+
 ## Controls:
 - "q" - quit game
 - "right  arrow" - move right
