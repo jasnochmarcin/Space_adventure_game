@@ -7,6 +7,10 @@ Creating space adventure game from scratch using pygame. Player has to destroy a
 - "left arrow" - move left
 - "space" - shot bullet
 
+### 26.05
+- Added high scores
+- Added lives system
+
 ### 25.05
 - Added a "Game" button to start a game
 - Added increasing difficoulty after win
