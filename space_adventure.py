@@ -66,12 +66,14 @@ class SpaceAdventure:
     def check_play_button(self, mouse_pos):
         """Starting a new game by pressing the Game button"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicked and not  self.stats.game_active:
+        if button_clicked and not self.stats.game_active:
             # Reset the game stats.
             self.settings.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.stats.game_active = True
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
 
             # Empty aliens and bullets lists.
             self.aliens.empty()
@@ -126,12 +128,18 @@ class SpaceAdventure:
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
+            self.sb.check_high_score()
 
         if not self.aliens:
             # Getting rid of existing bullets and creating a new fleet.
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            # Incorporation of level number
+            self.stats.level += 1
+            self.sb.prep_level()
+
 
     def _update_aliens(self):
         """Checking for enemies near the edge, then updating the location of all aliens in the fleet."""
@@ -189,8 +197,9 @@ class SpaceAdventure:
     def _ship_hit(self):
         """Reaction to enemy hitting the ship"""
         if self.stats.ships_left > 0:
-            # Reduction in the value of owned ships
+            # Reduction in the value of owned ships and updating the scoreboard
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
 
             # Removing the contents of the aliens and bullets lists.
             self.aliens.empty()
